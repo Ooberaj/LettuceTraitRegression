@@ -144,37 +144,6 @@ class MidFusionSubnet(nn.Module):
     outs = torch.cat([out1, out2, out3, out4, out5], dim = 1)
     return outs
 
-class MidFusionBatchNorm(nn.Module):
-  def __init__(self):
-    super(MidFusionBatchNorm, self).__init__()
-    self.resNet1rgb = torchvision.models.resnet18(pretrained = True)
-    self.resNet2rgb = torchvision.models.resnet18(pretrained = True)
-    self.resNet3rgb = torchvision.models.resnet18(pretrained = True)
-    self.resNet4rgb = torchvision.models.resnet18(pretrained = True)
-    self.resNet5rgb = torchvision.models.resnet18(pretrained = True)
-    self.depthEncoder1 = nn.Sequential(nn.Conv2d(1, 3, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False), nn.ReLU(), torchvision.models.resnet18(pretrained = True))
-    self.depthEncoder2 = nn.Sequential(nn.Conv2d(1, 3, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False), nn.ReLU(), torchvision.models.resnet18(pretrained = True))
-    self.depthEncoder3 = nn.Sequential(nn.Conv2d(1, 3, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False), nn.ReLU(), torchvision.models.resnet18(pretrained = True))
-    self.depthEncoder4 = nn.Sequential(nn.Conv2d(1, 3, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False), nn.ReLU(), torchvision.models.resnet18(pretrained = True))
-    self.depthEncoder5 = nn.Sequential(nn.Conv2d(1, 3, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False), nn.ReLU(), torchvision.models.resnet18(pretrained = True))
-
-    self.fcn1 = nn.Sequential(nn.BatchNorm1d(2000), nn.ReLU(), nn.Linear(2000, 1000), nn.BatchNorm1d(1000), nn.ReLU(), nn.BatchNorm1d(1000), nn.Linear(1000, 500), nn.BatchNorm1d(500), nn.ReLU(), nn.Linear(500, 1), nn.ReLU())
-    self.fcn2 = nn.Sequential(nn.BatchNorm1d(2000), nn.ReLU(), nn.Linear(2000, 1000), nn.BatchNorm1d(1000), nn.ReLU(), nn.BatchNorm1d(1000), nn.Linear(1000, 500), nn.BatchNorm1d(500), nn.ReLU(), nn.Linear(500, 1), nn.ReLU())
-    self.fcn3 = nn.Sequential(nn.BatchNorm1d(2000), nn.ReLU(), nn.Linear(2000, 1000), nn.BatchNorm1d(1000), nn.ReLU(), nn.BatchNorm1d(1000), nn.Linear(1000, 500), nn.BatchNorm1d(500), nn.ReLU(), nn.Linear(500, 1), nn.ReLU())
-    self.fcn4 = nn.Sequential(nn.BatchNorm1d(2000), nn.ReLU(), nn.Linear(2000, 1000), nn.BatchNorm1d(1000), nn.ReLU(), nn.BatchNorm1d(1000), nn.Linear(1000, 500), nn.BatchNorm1d(500), nn.ReLU(), nn.Linear(500, 1), nn.ReLU())
-    self.fcn5 = nn.Sequential(nn.BatchNorm1d(2000), nn.ReLU(), nn.Linear(2000, 1000), nn.BatchNorm1d(1000), nn.ReLU(), nn.BatchNorm1d(1000), nn.Linear(1000, 500), nn.BatchNorm1d(500), nn.ReLU(), nn.Linear(500, 1), nn.ReLU())
-
-  def forward(self, x):
-    rgbIn = x[:, :3, :, :]
-    depthIn = x[:, 3: , :, :]
-    out1 = self.fcn1(torch.cat([self.resNet1rgb(rgbIn), self.depthEncoder1(depthIn)], dim = 1))
-    out2 = self.fcn2(torch.cat([self.resNet2rgb(rgbIn), self.depthEncoder2(depthIn)], dim = 1))
-    out3 = self.fcn3(torch.cat([self.resNet3rgb(rgbIn), self.depthEncoder3(depthIn)], dim = 1))
-    out4 = self.fcn4(torch.cat([self.resNet4rgb(rgbIn), self.depthEncoder4(depthIn)], dim = 1))
-    out5 = self.fcn5(torch.cat([self.resNet5rgb(rgbIn), self.depthEncoder5(depthIn)], dim = 1))
-    outs = torch.cat([out1, out2, out3, out4, out5], dim = 1)
-    return outs
-
 class LateFusionSum(nn.Module):
   def __init__(self):
     super(LateFusionSum, self).__init__()
